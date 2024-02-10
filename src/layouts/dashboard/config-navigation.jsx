@@ -37,6 +37,11 @@ const navConfig = [
     path: '/404',
     icon: icon('ic_disabled'),
   },
+  {
+    title: 'pools',
+    path: '/pools',
+    icon: icon('ic_blog'),
+  },
 ];
 
 export default navConfig;
