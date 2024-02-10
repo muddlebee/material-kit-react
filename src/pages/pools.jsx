@@ -49,6 +49,7 @@ function PoolsTable() {
     setOrderDirection(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
+  
 
   const handleRowSelection = (rowId) => {
     const selectedIndex = selectedPools.indexOf(rowId);
@@ -71,10 +72,22 @@ function PoolsTable() {
   };
 
   const sortedData = [...poolsData].sort((a, b) => {
-    // Convert 'total_bonded' or other applicable fields to numerics if needed
-    const comparison = a[orderBy] < b[orderBy] ? -1 : 1; 
+    let comparison = 0;
+  
+    if (orderBy === 'pool_id' || orderBy === 'total_bonded') {
+      // Compare based on BigInts for accurate handling of very large numbers as strings 
+      const aValue = BigInt(a[orderBy]);
+      const bValue = BigInt(b[orderBy]);
+  
+      // eslint-disable-next-line no-nested-ternary
+      comparison = aValue < bValue ? -1 : (aValue > bValue ? 1 : 0);
+    } else {
+      // ... Existing string comparison logic
+    }
+  
     return orderDirection === 'asc' ? comparison : -comparison;
   });
+  
 
   return (
     <TableContainer component={Paper}>
@@ -92,6 +105,15 @@ function PoolsTable() {
               </TableSortLabel>
             </TableCell>
             <TableCell>Pool Name</TableCell> 
+            <TableCell>
+              <TableSortLabel
+                active={orderBy === 'total_bonded'}
+                direction={orderBy === 'total_bonded' ? orderDirection : 'asc'}
+                onClick={() => handleSortRequest('total_bonded')}
+              >
+                Total Bonded
+              </TableSortLabel>
+            </TableCell>
             {/* Add more column headers based on your API data */}
           </TableRow>
         </TableHead>
@@ -114,6 +136,7 @@ function PoolsTable() {
                 </TableCell>
                 <TableCell>{pool.pool_id}</TableCell>
                 <TableCell>{pool.metadata}</TableCell> {/* Assuming 'metadata' for name */}
+                <TableCell>{pool.total_bonded}</TableCell>
                 {/* Add more cells based on your API data */}
               </TableRow>
             ))
