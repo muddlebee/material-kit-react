@@ -73,21 +73,16 @@ function PoolsTable() {
 
   const sortedData = [...poolsData].sort((a, b) => {
     let comparison = 0;
-  
-    if (orderBy === 'pool_id' || orderBy === 'total_bonded') {
-      // Compare based on BigInts for accurate handling of very large numbers as strings 
-      const aValue = BigInt(a[orderBy]);
-      const bValue = BigInt(b[orderBy]);
-  
-      // eslint-disable-next-line no-nested-ternary
-      comparison = aValue < bValue ? -1 : (aValue > bValue ? 1 : 0);
-    } else {
-      // ... Existing string comparison logic
-    }
-  
+
+    // Compare based on BigInts for accurate handling of very large numbers as strings 
+    const aValue = BigInt(a[orderBy]);
+    const bValue = BigInt(b[orderBy]);
+
+    // eslint-disable-next-line no-nested-ternary
+    comparison = aValue < bValue ? -1 : (aValue > bValue ? 1 : 0);
     return orderDirection === 'asc' ? comparison : -comparison;
   });
-  
+
 
   return (
     <TableContainer component={Paper}>
@@ -96,7 +91,7 @@ function PoolsTable() {
           <TableRow>
             <TableCell padding="checkbox" /> {/* Column for selection */}
             <TableCell sortDirection={orderBy === 'pool_id' ? orderDirection : false}>
-              <TableSortLabel 
+              <TableSortLabel
                 active={orderBy === 'pool_id'}
                 direction={orderBy === 'pool_id' ? orderDirection : 'asc'}
                 onClick={() => handleSortRequest('pool_id')}
@@ -104,11 +99,19 @@ function PoolsTable() {
                 Pool ID
               </TableSortLabel>
             </TableCell>
-            <TableCell>Pool Name</TableCell> 
+            <TableCell>Pool Name</TableCell>
+            <TableCell>
+              <TableSortLabel
+                active={orderBy === 'member_count'}
+                direction={orderBy === 'member_count' ? orderDirection : 'desc'}
+                onClick={() => handleSortRequest('member_count')}
+              > Total Members
+              </TableSortLabel>
+            </TableCell>
             <TableCell>
               <TableSortLabel
                 active={orderBy === 'total_bonded'}
-                direction={orderBy === 'total_bonded' ? orderDirection : 'asc'}
+                direction={orderBy === 'total_bonded' ? orderDirection : 'desc'}
                 onClick={() => handleSortRequest('total_bonded')}
               >
                 Total Bonded
@@ -136,6 +139,7 @@ function PoolsTable() {
                 </TableCell>
                 <TableCell>{pool.pool_id}</TableCell>
                 <TableCell>{pool.metadata}</TableCell> {/* Assuming 'metadata' for name */}
+                <TableCell>{pool.member_count}</TableCell>
                 <TableCell>{pool.total_bonded}</TableCell>
                 {/* Add more cells based on your API data */}
               </TableRow>
